@@ -1,4 +1,4 @@
-import {config, authPromise} from './config';
+import {config, authPromise} from '../config';
 import fetch from 'node-fetch';
 
 let query = `
