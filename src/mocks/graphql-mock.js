@@ -1,5 +1,6 @@
-import {config, authPromise} from '../config';
+import {config, authenticate} from '../config';
 import fetch from 'node-fetch';
+
 
 let query = `
 mutation ($id: ID!, $input: PhysicalQuantitiesInput!) {
@@ -31,11 +32,7 @@ let variables = {
 	}
 };
 
-authPromise.then(function (loginResponseBody) {
-
-	if (loginResponseBody.errors) {
-		console.error(loginResponseBody.errors);
-	}
+authenticate(loginPayload => {
 
 	fetch(
 		config.apiUrl,
@@ -44,7 +41,7 @@ authPromise.then(function (loginResponseBody) {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
-				'Authorization': loginResponseBody.data.login.token,
+				'Authorization': loginPayload.token,
 			},
 			body: JSON.stringify({
 				query,
@@ -52,18 +49,18 @@ authPromise.then(function (loginResponseBody) {
 			})
 		}
 	).then(
-		res => res.json()
-	).then(
-		json => {
-			if (json.errors) {
-				console.error(json.errors);
-			} else {
-				let jsonPretty = JSON.stringify(json.data, null, 0);
-				console.log(jsonPretty);
-			}
+		queryResponse => queryResponse.json()
+	).then(responseJson => {
+
+		if (responseJson.errors) {
+			throw responseJson.errors;
+		} else {
+			let responsePretty = JSON.stringify(responseJson.data, null, 2);
+			console.log(responsePretty);
 		}
-	).catch(
-		err => console.error(err)
+
+	}).catch(
+		queryErrors => console.error(JSON.stringify(queryErrors, null, 2))
 	);
 
 });

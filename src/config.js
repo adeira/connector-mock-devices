@@ -7,20 +7,35 @@ let options = {
 	password: 'test',
 };
 
+let loginQuery = `
+mutation {
+	login (username: "${options.username}", password: "${options.password}") {
+		token
+	}
+}`;
 
-let authPromise = fetch(options.apiUrl, {
+
+let authenticate = fulfilled => fetch(options.apiUrl, {
 	method: 'post',
 	body: JSON.stringify({
-		query: `mutation { login(username: "${options.username}", password: "${options.password}") { token } }`
+		query: loginQuery
 	})
-}).then(function (loginResponse) {
-	return loginResponse.json();
+}).then(
+	loginResponse => loginResponse.json()
+).then(json => {
+
+	if (json.errors) {
+		throw json.errors;
+	} else {
+		fulfilled(json.data.login);
+	}
+
 }).catch(
-	err => console.error(err)
+	loginErrors => console.error(JSON.stringify(loginErrors, null, 2))
 );
 
 
 export {
 	options as config,
-	authPromise
+	authenticate
 };

@@ -5,6 +5,7 @@ let mocksPath = __dirname + '/mocks/';
 let knownDevices = [];
 
 fs.readdir(mocksPath, (err, files) => {
+
 	files.forEach(file => {
 		let knownDevice = mocksPath + file;
 		console.log(knownDevice);
