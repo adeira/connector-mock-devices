@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+let fetch = require('node-fetch');
 
 
 let options = {
@@ -35,7 +35,5 @@ let authenticate = fulfilled => fetch(options.apiUrl, {
 );
 
 
-export {
-	options as config,
-	authenticate
-};
+exports.config = options;
+exports.authenticate = authenticate;
