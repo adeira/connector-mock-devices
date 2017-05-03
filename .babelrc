@@ -1,5 +1,16 @@
 {
   "presets": [
-    "env"
+    [
+      "env",
+      {
+        "exclude": [
+          "transform-regenerator",
+          "transform-async-to-generator"
+        ]
+      }
+    ]
+  ],
+  "plugins": [
+    "fast-async"
   ]
 }
