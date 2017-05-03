@@ -1,19 +1,11 @@
-let {config, authenticate} = require('../config');
-let fetch = require('node-fetch');
-
-let query = `
-mutation ($id: ID!, $input: PhysicalQuantitiesInput!) {
-  createWeatherStationRecord(id: $id, quantities: $input) {
-    id
-  }
-}`;
+import createRecord from '../request';
 
 function random(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 let variables = {
-	id: '00000000-0001-0000-0000-000000000001', //FIXME
+	id: '00000000-0001-0000-0000-000000000001',
 	input: {
 		absolutePressure: random(101300, 101350),
 		relativePressure: random(99500, 100000),
@@ -31,35 +23,5 @@ let variables = {
 	}
 };
 
-authenticate(async loginPayload => {
-
-	try {
-		let queryResponse = await fetch(
-			config.apiUrl,
-			{
-				method: 'POST',
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-					'Authorization': loginPayload.token,
-				},
-				body: JSON.stringify({
-					query,
-					variables
-				})
-			}
-		);
-
-		let responseJson = await queryResponse.json();
-		if (responseJson.errors) {
-			throw responseJson.errors;
-		}
-
-		let responsePretty = JSON.stringify(responseJson.data, null, 2);
-		console.log(responsePretty);
-
-	} catch (error) {
-		console.error(JSON.stringify(error, null, 2))
-	}
-
-});
+console.log(variables);
+createRecord(variables);
